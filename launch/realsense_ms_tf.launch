@@ -1,0 +1,16 @@
+<launch>    
+    <node pkg="tf" type="static_transform_publisher" name="camera_tf" args="0 0 0 0 0 0 /panda_camera /camera_color_optical_frame 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="red_band1" args="0.0428343389  0.0941501392  0.00574399604 -1.28432728e-04  4.29456306e-03  1.20144363e-02  0.999918593 /panda_camera /ms_red_band1 100" />
+    <node pkg="tf" type="static_transform_publisher" name="red_band2" args="0.01263155  0.0813626   0.00720327 -0.01689056  0.00598473  0.01502119 0.99972659  /panda_camera /ms_red_band2 100" />
+    <node pkg="tf" type="static_transform_publisher" name="red_band3" args="0.01480476  0.10231853  0.00598217 -0.01588181  0.00263795  0.01488437 0.9997596 /panda_camera /ms_red_band3 100" />
+    <node pkg="tf" type="static_transform_publisher" name="red_band4" args="0.04594644  0.10502761  0.00645544 -0.01311746  0.0016642   0.01429631 0.99981037  /panda_camera /ms_red_band4 100" />
+    <node pkg="tf" type="static_transform_publisher" name="red_band5" args="0.0301393   0.09120481  0.00307531 -0.01593297  0.00356013  0.00735166 0.9998397  /panda_camera /ms_red_band5 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="blue_band1" args="0.03752476  0.03810919  0.00791518  0.00616614  0.01123891 -0.01516318 0.99980285 /panda_camera /ms_blue_band1 100" />
+    <node pkg="tf" type="static_transform_publisher" name="blue_band2" args="-0.00336627  0.04208228  0.00593604  0.00562865  0.02075107 -0.01580623 0.99964387  /panda_camera /ms_blue_band2 100" />
+    <node pkg="tf" type="static_transform_publisher" name="blue_band3" args="-0.00275788  0.06014763  0.00364688  0.00203374  0.02032168 -0.01419721 0.99969062 /panda_camera /ms_blue_band3 100" />
+    <node pkg="tf" type="static_transform_publisher" name="blue_band4" args="0.0367699059  0.0637876751  5.55747235e-03  6.62676604e-03 1.41663766e-02 -6.39159006e-05  9.99877690e-01  /panda_camera /ms_blue_band4 100" />
+    <node pkg="tf" type="static_transform_publisher" name="blue_band5" args="0.02168865  0.05597077  0.00541017  0.00936146  0.01184955 -0.00741699 0.99985846  /panda_camera /ms_blue_band5 100" />
+</launch>
+

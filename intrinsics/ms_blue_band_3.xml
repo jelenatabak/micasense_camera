@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<root>
+  <!--This file stores intrinsic camera parameters used
+   in the vpCameraParameters Class of ViSP available
+   at https://visp.inria.fr/download/ .
+   It can be read with the parse method of
+   the vpXmlParserCamera class.-->
+  <camera>
+    <!--Name of the camera-->
+    <name>Camera</name>
+    <!--Size of the image on which camera calibration was performed-->
+    <image_width>1280</image_width>
+    <image_height>960</image_height>
+    <!--Intrinsic camera parameters computed for each projection model-->
+    <model>
+      <!--Projection model type-->
+      <type>perspectiveProjWithoutDistortion</type>
+      <!--Pixel ratio-->
+      <px>1495.0272171293207</px>
+      <py>1506.6112015400402</py>
+      <!--Principal point-->
+      <u0>637.21061974493966</u0>
+      <v0>478.08449906244573</v0>
+    </model>
+    <model>
+      <!--Projection model type-->
+      <type>perspectiveProjWithDistortion</type>
+      <!--Pixel ratio-->
+      <px>1486.3062006221317</px>
+      <py>1495.490900857865</py>
+      <!--Principal point-->
+      <u0>638.97301712674312</u0>
+      <v0>479.50594098701214</v0>
+      <!--Undistorted to distorted distortion parameter-->
+      <kud>-0.069225738589244273</kud>
+      <!--Distorted to undistorted distortion parameter-->
+      <kdu>0.070119592847447884</kdu>
+    </model>
+    <!--Additional information-->
+    <additional_information>
+      <date>2021/11/15 11:15:37</date>
+      <nb_calibration_images>10</nb_calibration_images>
+      <calibration_pattern_type>Chessboard</calibration_pattern_type>
+      <board_size>9x6</board_size>
+      <square_size>0.026</square_size>
+      <global_reprojection_error>
+        <without_distortion>0.776737</without_distortion>
+        <with_distortion>0.72356</with_distortion>
+      </global_reprojection_error>
+      <camera_poses>
+        <cMo>0.07545966023  0.03173225747  0.6706071405  -0.3128704112  -0.3700447407  2.965518774</cMo>
+        <cMo>0.1299700172  0.03426280379  0.4834367073  0.8698100567  0.002358418333  2.909239291</cMo>
+        <cMo>0.0359932556  0.07869975548  0.5779331273  -0.5310895133  -0.9917569308  -2.900876711</cMo>
+        <cMo>0.08564988676  0.05517559118  0.5811348572  -0.5759657059  0.7598251121  -2.934954343</cMo>
+        <cMo>-0.05521651738  0.07995747437  0.5930278492  -0.7644578876  -0.5950977504  -2.050238625</cMo>
+        <cMo>0.06114556882  0.06340737273  0.4416043236  -0.4691901762  -0.3821017571  -2.991933181</cMo>
+        <cMo>0.1266361388  0.04479698841  0.5873039637  -0.3766719271  -0.5591411998  2.84868101</cMo>
+        <cMo>0.09928847113  0.07917232368  0.4785252108  -0.309647158  -0.4032915944  -2.812039969</cMo>
+        <cMo>0.1551215899  -0.006914035483  0.5207402734  0.333498118  0.5382417533  3.035487449</cMo>
+        <cMo>0.0003000317565  0.09974015037  0.6318164626  -0.08848479051  -0.5516470798  -2.562205987</cMo>
+        <cMo_dist>0.07459826277  0.03109010819  0.6656161144  -0.3207895639  -0.3690260233  2.964896454</cMo_dist>
+        <cMo_dist>0.1291239574  0.03380273347  0.4776699868  0.8726067133  0.002529693404  2.908881688</cMo_dist>
+        <cMo_dist>0.03531155365  0.07804681811  0.5719166711  -0.5305372091  -0.9918113709  -2.901648286</cMo_dist>
+        <cMo_dist>0.08490152104  0.05466481528  0.5763110917  -0.5758538036  0.7603333851  -2.934183059</cMo_dist>
+        <cMo_dist>-0.05587211704  0.07946374145  0.5881867797  -0.7617443999  -0.5937037588  -2.051520333</cMo_dist>
+        <cMo_dist>0.06067094781  0.06301537287  0.437679067  -0.4649265541  -0.3799199428  -2.992980929</cMo_dist>
+        <cMo_dist>0.1259732594  0.04427760929  0.5828636159  -0.3790020594  -0.5585182045  2.848444274</cMo_dist>
+        <cMo_dist>0.09861229901  0.0787458051  0.4737667566  -0.312498484  -0.399135811  -2.812246592</cMo_dist>
+        <cMo_dist>0.1540276155  -0.007377932921  0.5135055849  0.3470464813  0.5328292252  3.035498923</cMo_dist>
+        <cMo_dist>-0.0003631525128  0.09921627187  0.6266509779  -0.08236242409  -0.5501460252  -2.56301049</cMo_dist>
+      </camera_poses>
+    </additional_information>
+  </camera>
+</root>

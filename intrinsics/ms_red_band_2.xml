@@ -1,0 +1,74 @@
+<?xml version="1.0"?>
+<root>
+  <!--This file stores intrinsic camera parameters used
+   in the vpCameraParameters Class of ViSP available
+   at https://visp.inria.fr/download/ .
+   It can be read with the parse method of
+   the vpXmlParserCamera class.-->
+  <camera>
+    <!--Name of the camera-->
+    <name>Camera</name>
+    <!--Size of the image on which camera calibration was performed-->
+    <image_width>1280</image_width>
+    <image_height>960</image_height>
+    <!--Intrinsic camera parameters computed for each projection model-->
+    <model>
+      <!--Projection model type-->
+      <type>perspectiveProjWithoutDistortion</type>
+      <!--Pixel ratio-->
+      <px>1489.2296315533176</px>
+      <py>1497.9862811280041</py>
+      <!--Principal point-->
+      <u0>636.09290646848876</u0>
+      <v0>485.77366867680541</v0>
+    </model>
+    <model>
+      <!--Projection model type-->
+      <type>perspectiveProjWithDistortion</type>
+      <!--Pixel ratio-->
+      <px>1498.1258411302647</px>
+      <py>1506.1641988233389</py>
+      <!--Principal point-->
+      <u0>632.8430527498831</u0>
+      <v0>479.97704421239877</v0>
+      <!--Undistorted to distorted distortion parameter-->
+      <kud>-0.042471756303093473</kud>
+      <!--Distorted to undistorted distortion parameter-->
+      <kdu>0.042793776114181573</kdu>
+    </model>
+    <!--Additional information-->
+    <additional_information>
+      <date>2021/11/09 14:58:03</date>
+      <nb_calibration_images>10</nb_calibration_images>
+      <calibration_pattern_type>Chessboard</calibration_pattern_type>
+      <board_size>9x6</board_size>
+      <square_size>0.026</square_size>
+      <global_reprojection_error>
+        <without_distortion>0.641463</without_distortion>
+        <with_distortion>0.621522</with_distortion>
+      </global_reprojection_error>
+      <camera_poses>
+        <cMo>0.1471587537  0.02074754663  0.6417690919  -0.08013223136  0.01332584225  2.657111187</cMo>
+        <cMo>0.1682968974  0.0570060191  0.5486784494  0.1853107352  0.07455168766  3.082703759</cMo>
+        <cMo>0.09829511956  0.04768391524  0.4590174409  0.3380075481  0.4792917869  2.916625624</cMo>
+        <cMo>0.1094244765  0.0608543886  0.5041580302  0.6002206642  -0.3087065569  2.939116708</cMo>
+        <cMo>0.2054739445  0.00428913968  0.7018810081  0.3058639636  -0.4423405855  -3.031006599</cMo>
+        <cMo>0.07431993128  0.1336815368  0.5919982598  0.01913642633  0.7024597413  -3.026007624</cMo>
+        <cMo>0.1919343798  0.1218985331  0.6602363487  0.002442589427  0.7683921353  -3.032056365</cMo>
+        <cMo>-0.03366349999  0.1001241837  0.555109606  -0.3978826005  -0.8034668772  -2.29105013</cMo>
+        <cMo>0.02579656737  0.09800434606  0.4824026304  -0.478969222  -0.6075836212  -2.23278121</cMo>
+        <cMo>0.01534878221  0.06932636958  0.6153370044  0.8445087694  -0.1387531561  2.642044604</cMo>
+        <cMo_dist>0.1485528188  0.02321652467  0.6444236804  -0.07668936904  0.01626688343  2.657242248</cMo_dist>
+        <cMo_dist>0.1692121023  0.05912762684  0.5489704512  0.2064116856  0.07782646435  3.081240849</cMo_dist>
+        <cMo_dist>0.09928555262  0.04944411541  0.4607430399  0.3407824924  0.4855360263  2.915120514</cMo_dist>
+        <cMo_dist>0.1105006899  0.06279851364  0.5059442473  0.6040288156  -0.3029960666  2.937913225</cMo_dist>
+        <cMo_dist>0.2070021572  0.006978695515  0.7039045978  0.2964780306  -0.4436211678  -3.030675439</cMo_dist>
+        <cMo_dist>0.07556632039  0.1359357056  0.5937928309  0.01927262394  0.695338466  -3.028234446</cMo_dist>
+        <cMo_dist>0.1933464973  0.1244519897  0.6611574248  -0.006055064125  0.7644902118  -3.033528958</cMo_dist>
+        <cMo_dist>-0.03241126252  0.1022028687  0.557094179  -0.4019690415  -0.8079496001  -2.288828079</cMo_dist>
+        <cMo_dist>0.02684900274  0.09989773714  0.4846281685  -0.4831483401  -0.6105263726  -2.231244096</cMo_dist>
+        <cMo_dist>0.01675981264  0.07166639749  0.6181000108  0.8444930648  -0.1327997908  2.640680779</cMo_dist>
+      </camera_poses>
+    </additional_information>
+  </camera>
+</root>

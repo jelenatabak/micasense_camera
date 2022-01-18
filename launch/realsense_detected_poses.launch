@@ -1,0 +1,38 @@
+<launch>
+    <node pkg="tf" type="static_transform_publisher" name="board11" args="-1.38843e-01 -5.17877e-02  5.19516e-01  0 0 0 /ms_red_band1 /ms1_board1 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board21" args="-1.10563e-01 -3.60264e-02  4.75582e-01  0 0 0 /ms_red_band1 /ms1_board2 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board31" args="-1.24542e-01 -4.14519e-02  4.82742e-01  0 0 0  /ms_red_band1 /ms1_board3 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board41" args="-1.27771e-02 -2.89709e-02  4.34672e-01  0 0 0 /ms_red_band1 /ms1_board4 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board51" args="-2.55900e-05 -8.55265e-02  4.08095e-01  0 0 0 /ms_red_band1 /ms1_board5 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="board22" args="-0.082259   -0.0393388   0.474433   -0.01044053  0.18375269 -0.06832198 0.98053967 /ms_red_band2 /ms2_board2 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board32" args="-0.0963315  -0.0447423   0.481548   -0.0453133   0.23191431  0.02415289 0.97138  /ms_red_band2 /ms2_board3 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board42" args="0.0159042  -0.0323731   0.434171   -0.04567507 -0.2890632   0.00817088 0.95618486 /ms_red_band2 /ms2_board4 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="board1" args="-0.109849   -0.0760553   0.516814  0 0 0 /ms_red_band3 /ms3_board1 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board2" args="-0.0817214  -0.0599938   0.473601  0 0 0 /ms_red_band3 /ms3_board2 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board3" args="-0.0957337  -0.0654173   0.480767  0 0 0  /ms_red_band3 /ms3_board3 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board4" args="0.0165304  -0.0527772   0.433525  0 0 0 /ms_red_band3 /ms3_board4 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board5" args="0.0293425  -0.10921     0.406807  0 0 0 /ms_red_band3 /ms3_board5 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board6" args="0.00445752  0.065314    0.438017  0 0 0 /ms_red_band3 /ms3_board6 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board7" args="0.123036    0.0536291   0.430203  0 0 0 /ms_red_band3 /ms3_board7 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board8" args="0.156263   -0.0146439   0.484491  0 0 0 /ms_red_band3 /ms3_board8 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board9" args="0.0236065   0.0806392   0.493525  0 0 0 /ms_red_band3 /ms3_board9 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board10" args="-0.0785908  -0.0433427   0.515901  0 0 0 /ms_red_band3 /ms3_board10 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="board24" args="-0.111801   -0.0591715   0.473528   -0.0126084   0.1849858  -0.06626563 0.98042345 /ms_red_band4 /ms4_board2 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board34" args="-0.125755   -0.0645785   0.480739   -0.04776594  0.23304055  0.02626757 0.97093796  /ms_red_band4 /ms4_board3 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board44" args="-0.0138037  -0.0519797   0.432913   -0.04576394 -0.2881781   0.010364 0.95642649 /ms_red_band4 /ms4_board4 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="board25" args="-9.72497000e-02 -4.95773000e-02  4.74190000e-01 -1.14286271e-02 1.84114772e-01 -6.72216046e-02  9.80536788e-01 /ms_red_band5 /ms5_board2 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board35" args="-1.11250000e-01 -5.50017000e-02  4.81297000e-01 -4.61439964e-02 2.32395783e-01  2.52053994e-02  9.71199063e-01  /ms_red_band5 /ms5_board3 100" />
+    <node pkg="tf" type="static_transform_publisher" name="board45" args="8.53891000e-04 -4.24632000e-02  4.33934000e-01 -4.53739436e-02 -2.88912289e-01  9.36355828e-03  9.56233872e-01 /ms_red_band5 /ms5_board4 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="blue1" args="-0.0134633  -0.0946564   0.508195    0.02822817  0.03744503  0.32780663 0.94358034 /ms_blue_band1 /ms1_blue_board1 100" />
+    <node pkg="tf" type="static_transform_publisher" name="blue2" args="0.0171863  -0.0984079   0.50828     0.03202007  0.04293383  0.32822794 0.94307891 /ms_blue_band2 /ms2_blue_board1 100" />
+    <node pkg="tf" type="static_transform_publisher" name="blue3" args="0.0171551  -0.120933    0.506474    0.03242765  0.04383906  0.3273749 0.94331981  /ms_blue_band3 /ms3_blue_board1 100" />
+    <node pkg="tf" type="static_transform_publisher" name="blue4" args="-0.0149481  -0.119389    0.510739    0.02577034  0.03734305  0.32874163 0.94332938 /ms_blue_band4 /ms4_blue_board1 100" />
+    <node pkg="tf" type="static_transform_publisher" name="blue5" args="2.00787000e-03 -1.08941000e-01  5.08089000e-01  3.04773832e-02 4.16569702e-02  3.27622166e-01  9.43397871e-01 /ms_blue_band5 /ms5_blue_board1 100" />
+
+</launch>
+
