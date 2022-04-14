@@ -1,0 +1,7 @@
+<launch>
+    <include file="$(find realsense2_camera)/launch/rs_rgbd.launch" />
+    <include file="$(find micasense_camera)/launch/realsense_ms_tf.launch" />
+
+    <node pkg="micasense_camera" type="agrosparc.py" name="agrosparc" output="screen"/>
+    <node pkg="micasense_camera" type="rs_watchdog.py" name="watchdog" output="screen"/>
+</launch>
