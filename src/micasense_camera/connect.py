@@ -2,7 +2,7 @@ from configparser import ConfigParser
 import psycopg2
 
 
-def config(filename='/home/jelena/catkin_ws_old/src/micasense_camera/src/micasense_camera/database.ini', section='postgresql'):
+def config(filename='/home/franka/catkin_ws/src/micasense_camera/src/micasense_camera/database.ini', section='postgresql'):
     """
     Read and parse the database connection parameters from database.ini file.
     """

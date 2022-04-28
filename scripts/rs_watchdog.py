@@ -17,10 +17,10 @@ def main():
 
 
     while not rospy.is_shutdown():
-        rospy.sleep(1)  
+        rospy.sleep(120)  
         hz = r.get_hz(topic)
         
-        if hz is None or hz[0] < 1:
+        if hz is None or hz[0] < 0.1:
             uuid = roslaunch.rlutil.get_or_generate_uuid(None, False)
             roslaunch.configure_logging(uuid)
             launch = roslaunch.parent.ROSLaunchParent(uuid, [launch_file_path])

@@ -79,9 +79,12 @@ class DataCollector:
         self.pc_topic = 'camera/depth_registered/points'
         self.rs_topic = 'camera/color/image_raw'
 
-        self.local_path = '/home/franka/catkin_ws/src/micasense_camera/agrosparc_data'
+        self.local_path = '/home/franka/catkin_ws/src/micasense_camera/agrosparc_data/test'
         self.base_path = '/mnt/data/home/agrosparc/agrosparc_data'
         os.umask(0)
+
+        if os.path.isdir(self.local_path):
+            shutil.rmtree(self.local_path)
 
         self.ms_camera = []
         for i in range(1, 6):
@@ -125,8 +128,8 @@ class DataCollector:
             self.T.append(Tx)
 
         self.addr = '192.168.10.254'
-        # self.stereo_client = dynamic_reconfigure.client.Client(
-        #     '/camera/stereo_module')
+        self.stereo_client = dynamic_reconfigure.client.Client(
+            '/camera/stereo_module')
 
         self.server = create_SSH_tunnel()
         try:
@@ -148,7 +151,8 @@ class DataCollector:
         while not rospy.is_shutdown():
             self.cam = fetch_camera_trigger(self.conn)
             if not self.cam.empty and self.cam['trigger'].iloc[-1]:
-                self.plant_id = int(self.cam['plant_id'].iloc[-1])
+                self.plant_id_lower = int(self.cam['plant_id_lower'].iloc[-1])
+                self.plant_id_upper = int(self.cam['plant_id_upper'].iloc[-1])
                 self.zone_id = int(self.cam['zone_id'].iloc[-1])
                 self.device_id = int(self.cam['device_id'].iloc[-1])
 
@@ -176,11 +180,10 @@ class DataCollector:
     def publish_data(self):
         batch_ts = self.ts
         ts = self.ts
-        plant_id = int(self.cam['plant_id'].iloc[-1])
-        zone_id = int(self.cam['zone_id'].iloc[-1])
-        device_id = int(self.cam['device_id'].iloc[-1])
         image_path = self.path
-        insert_values = (batch_ts, ts, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, self.plant_id, self.zone_id, self.device_id, image_path)
+        insert_values = (batch_ts, ts, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, self.plant_id_lower, self.zone_id, self.device_id, image_path)
+        insert_camera_measurements(insert_values, self.conn)
+        insert_values = (batch_ts, ts, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, self.plant_id_upper, self.zone_id, self.device_id, image_path)
         insert_camera_measurements(insert_values, self.conn)
 
 
@@ -355,7 +358,7 @@ class DataCollector:
 def main():
     rospy.init_node('data_collector', anonymous=True)
     
-    path = '/home/jelena/bags/agrosparc_test/IMG_0003_4.tif' 
+    # path = '/home/jelena/bags/agrosparc_test/IMG_0003_4.tif' 
 
     # img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
     # for y in range(960):
@@ -379,7 +382,7 @@ def main():
 
     
     collector = DataCollector()
-    collector.calculate_indices_test()
+    collector.collect_data()
 
 if __name__ == "__main__":
     main()

@@ -42,7 +42,8 @@ def insert_camera_trigger(insert_values, conn):
             'source, ' \
             'device_id, ' \
             'zone_id, ' \
-            'plant_id) VALUES ({})'.format(values_template)
+            'plant_id_upper, ' \
+            'plant_id_lower) VALUES ({})'.format(values_template)
 
     cur.execute(timeout+query, insert_values)
     conn.commit()
@@ -97,7 +98,7 @@ def fetch_camera_trigger(conn):
 
     # Create query
     timeout = 'SET statement_timeout = 999; '
-    query = 'SELECT * FROM camera_trigger'
+    query = 'SELECT * FROM camera_trigger ORDER BY timestamp ASC'
     # Obtain data as a Pandas dataframe
     try:
         cameras = pd.read_sql_query(timeout+query, conn)
