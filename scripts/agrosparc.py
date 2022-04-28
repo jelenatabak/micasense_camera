@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from turtle import shape
 from numpy.core.numeric import NaN
 import rospy
 
@@ -29,6 +30,9 @@ from micasense_camera.db_interaction import *
 import datetime
 import rosbag
 import urllib.request
+
+import pysftp
+import shutil
 
 class CameraModel:
     def __init__(self, path):
@@ -75,8 +79,8 @@ class DataCollector:
         self.pc_topic = 'camera/depth_registered/points'
         self.rs_topic = 'camera/color/image_raw'
 
-        self.base_path = '/home/franka/catkin_ws/src/micasense_camera/agrosparc_data'
-        #self.base_path = '/mnt/data/home/agrosparc/agrosparc_data'
+        self.local_path = '/home/franka/catkin_ws/src/micasense_camera/agrosparc_data'
+        self.base_path = '/mnt/data/home/agrosparc/agrosparc_data'
         os.umask(0)
 
         self.ms_camera = []
@@ -121,8 +125,8 @@ class DataCollector:
             self.T.append(Tx)
 
         self.addr = '192.168.10.254'
-        self.stereo_client = dynamic_reconfigure.client.Client(
-            '/camera/stereo_module')
+        # self.stereo_client = dynamic_reconfigure.client.Client(
+        #     '/camera/stereo_module')
 
         self.server = create_SSH_tunnel()
         try:
@@ -133,6 +137,11 @@ class DataCollector:
 
         self.conn = connect()
         print('Initialized!')
+
+        remote_host = '161.53.68.231'
+        remote_user = 'agrosparc_user'
+        remote_user_pass = 'vege123!'
+        self.srv = pysftp.Connection(host=remote_host, username=remote_user, password=remote_user_pass)
 
 
     def collect_data(self):
@@ -165,20 +174,24 @@ class DataCollector:
                 rospy.sleep(3)
 
     def publish_data(self):
-        batch_ts = datetime.datetime.now()
-        ts = datetime.datetime.now()
+        batch_ts = self.ts
+        ts = self.ts
+        plant_id = int(self.cam['plant_id'].iloc[-1])
+        zone_id = int(self.cam['zone_id'].iloc[-1])
+        device_id = int(self.cam['device_id'].iloc[-1])
         image_path = self.path
         insert_values = (batch_ts, ts, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, self.plant_id, self.zone_id, self.device_id, image_path)
         insert_camera_measurements(insert_values, self.conn)
 
 
     def store_data(self):
+        os.mkdir(self.local_path)
         self.path = os.path.join(self.base_path, str(self.device_id) + "_" + str(self.zone_id) + "_" + str(self.ts))
-        os.mkdir(self.path)
+        self.srv.makedirs(self.path, mode=777)
 
         # save bag files
         bag_name = str(self.ts) + '.bag'
-        bag_path = os.path.join(self.path, bag_name)
+        bag_path = os.path.join(self.local_path, bag_name)
         bag = rosbag.Bag(bag_path, 'w')
         bag.write(self.pc_topic, self.pc_msg)
         bag.write(self.rs_topic, self.rs_msg)
@@ -190,7 +203,7 @@ class DataCollector:
         for i in range(1,6):
             path = paths.get(str(i))
             path_split = path.split('/')
-            write_path = os.path.join(self.path, path_split[2], path_split[3])
+            write_path = os.path.join(self.local_path, path_split[2], path_split[3])
             print(write_path)
             os.umask(000)
             os.makedirs(write_path, mode=0o777, exist_ok=True)
@@ -199,6 +212,10 @@ class DataCollector:
             f.write(urllib.request.urlopen(req).read())
             f.close()
             print('Image saved: ' + write_path)
+
+        # copy to server and delete local copy
+        self.srv.put_r(self.local_path, self.path, preserve_mtime=True)
+        shutil.rmtree(self.local_path)
 
     def calculate_indices(self):
         self.ndvi_array = np.copy(self.pc_array)
@@ -211,6 +228,96 @@ class DataCollector:
                     self.ndvi_array[i, j][3] = (nir-red)/(nir+red)
                 else:
                     self.ndvi_array[i, j][3] = NaN
+    
+    def calculate_indices_test(self):
+        pc_pub = rospy.Publisher("/test_pc", PointCloud2, queue_size=10)
+
+        self.images = []
+        for i in range(1, 6):
+            path = '/home/jelena/bags/agrosparc_test/IMG_0003_' + str(i) + '.tif'
+            #self.images.append(cv2.imread(path, cv2.IMREAD_UNCHANGED))
+            self.images.append(Image(path).undistorted_reflectance())
+
+        self.ms_bands = 5
+
+        test_bag = rosbag.Bag('/home/jelena/bags/agrosparc_test/test.bag')
+        for topic, msg, t in test_bag.read_messages(topics=['camera/depth_registered/points']):
+            self.pc_array = ros_numpy.point_cloud2.pointcloud2_to_array(msg)
+
+        self.array = np.copy(self.pc_array)
+        self.pc_height = self.pc_array.shape[0]
+        self.pc_width = self.pc_array.shape[1]
+        self.ms_array = np.full(
+            [self.pc_height, self.pc_width, self.ms_bands], NaN)
+
+        for i in range(self.pc_height):
+            for j in range(self.pc_width):
+                pt = self.array[i][j]
+
+                if not isnan(pt[0]):
+                    point = np.matrix([[pt[0]], [pt[1]], [pt[2]], [1]])
+
+                    for n in range(self.ms_bands):
+                        point_transformed = np.dot(self.T[n], point)
+
+                        u, v = self.ms_camera[n].get_pixel_coordinates(
+                            point_transformed)
+                        if u is not None and v is not None:
+                            self.ms_array[i, j, n] = self.images[n][v, u]
+
+        self.ndvi_array = np.copy(self.pc_array)
+        nir_thresh = 0.15
+        ind = np.zeros(12)
+        counter = 0
+
+        # for i in range(self.pc_height):
+        #     for j in range(self.pc_width):
+
+        for i in range(320,480):
+            for j in range(300,390):
+                blue = self.ms_array[i, j, 0]
+                green = self.ms_array[i, j, 1]
+                red = self.ms_array[i, j, 2]
+                nir = self.ms_array[i, j, 3]
+                re = self.ms_array[i, j, 4]
+
+                if not isnan(nir) and not isnan(red) and not isnan(green) and not isnan(re) and not isnan(blue) and nir > nir_thresh:
+                    counter += 1
+                    ind[0] += (nir-red)/(nir+red)
+                    ind[1] += nir/red
+                    ind[2] += (nir-green)/(nir+green)
+                    ind[3] += 0.16*(nir-red)/(nir+red+0.16)
+                    ind[4] += (2*nir + 1 - sqrt(pow((2*nir+1), 2) - 8*(nir-red))) / 2
+                    ind[5] += 1.5*(1.2*(nir-green)-2.5*(red-green)) / sqrt(pow((3*nir+1),2)-(6*nir-5*sqrt(red))-0.5) 
+                    ind[6] += 1.16*(nir-red)/(nir+red+0.16)
+                    ind[7] += nir - re/nir + re
+                    ind[8] += 2.5*(nir-red) / (nir+6*red-7.5*blue+1)
+                    ind[9] += 0.5*(120*(nir-green)-200*(red-green))
+                    ind[10] += (nir-red) / sqrt(nir+red)
+                    ind[11] += nir-red
+
+                    self.ndvi_array[i, j][3] = (nir-red)/(nir+red)
+                else:
+                    self.ndvi_array[i, j][3] = NaN
+
+        avg_indices = ind / counter
+        print(avg_indices)
+
+        msg = ros_numpy.point_cloud2.array_to_pointcloud2(self.ndvi_array, frame_id='base')
+
+        while not rospy.is_shutdown():
+            pc_pub.publish(msg)
+            rospy.sleep(5)
+            print('PC published!')
+
+    def find_thresh(self):
+        path = '/home/jelena/bags/agrosparc_test/IMG_0003_4.tif' 
+        img = Image(path).undistorted_reflectance()
+
+        cv2.imshow("test", img)
+        cv2.waitKey()
+
+
 
     # reflectance, not raw!
     def generate_mspc(self):
@@ -247,8 +354,32 @@ class DataCollector:
 
 def main():
     rospy.init_node('data_collector', anonymous=True)
+    
+    path = '/home/jelena/bags/agrosparc_test/IMG_0003_4.tif' 
+
+    # img = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+    # for y in range(960):
+    #     for x in range(1280):
+    #         nir = img[y,x]
+    #         if nir < 30000: # manje
+    #             img[y,x] = 0
+
+    # img = Image(path).undistorted_reflectance()
+
+    # for y in range(960):
+    #     for x in range(1280):
+    #         nir = img[y,x]
+    #         if nir < 0.15:
+    #             img[y,x] = 0
+
+
+    # cv2.imshow("test", img)
+    # cv2.imwrite('/home/jelena/bags/agrosparc_test/mask.tif', img)
+    # cv2.waitKey()
+
+    
     collector = DataCollector()
-    collector.collect_data()
+    collector.calculate_indices_test()
 
 if __name__ == "__main__":
     main()
