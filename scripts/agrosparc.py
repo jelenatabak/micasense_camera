@@ -75,17 +75,17 @@ class DataCollector:
         self.pc_topic = 'camera/depth_registered/points'
         self.rs_topic = 'camera/color/image_raw'
 
-        self.base_path = '/home/jelena/catkin_ws_old/src/micasense_camera/agrosparc_data'
+        self.base_path = '/home/franka/catkin_ws/src/micasense_camera/agrosparc_data'
         #self.base_path = '/mnt/data/home/agrosparc/agrosparc_data'
         os.umask(0)
 
         self.ms_camera = []
         for i in range(1, 6):
-            xml_path = '/home/jelena/catkin_ws_old/src/micasense_camera/intrinsics/ms_red_band_' + \
+            xml_path = '/home/franka/catkin_ws/src/micasense_camera/intrinsics/ms_red_band_' + \
                 str(i) + '.xml'
             self.ms_camera.append(CameraModel(xml_path))
         for i in range(1, 6):
-            xml_path = '/home/jelena/catkin_ws_old/src/micasense_camera/intrinsics/ms_blue_band_' + \
+            xml_path = '/home/franka/catkin_ws/src/micasense_camera/intrinsics/ms_blue_band_' + \
                 str(i) + '.xml'
             self.ms_camera.append(CameraModel(xml_path))
 
@@ -139,6 +139,10 @@ class DataCollector:
         while not rospy.is_shutdown():
             self.cam = fetch_camera_trigger(self.conn)
             if not self.cam.empty and self.cam['trigger'].iloc[-1]:
+                self.plant_id = int(self.cam['plant_id'].iloc[-1])
+                self.zone_id = int(self.cam['zone_id'].iloc[-1])
+                self.device_id = int(self.cam['device_id'].iloc[-1])
+
                 print('Collecting data')
                 self.ts = datetime.datetime.now()
                 self.pc_msg = rospy.wait_for_message(self.pc_topic, PointCloud2)
@@ -163,16 +167,13 @@ class DataCollector:
     def publish_data(self):
         batch_ts = datetime.datetime.now()
         ts = datetime.datetime.now()
-        plant_id = int(self.cam['plant_id'].iloc[-1])
-        zone_id = int(self.cam['zone_id'].iloc[-1])
-        device_id = int(self.cam['device_id'].iloc[-1])
         image_path = self.path
-        insert_values = (batch_ts, ts, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, plant_id, zone_id, device_id, image_path)
+        insert_values = (batch_ts, ts, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, self.plant_id, self.zone_id, self.device_id, image_path)
         insert_camera_measurements(insert_values, self.conn)
 
 
     def store_data(self):
-        self.path = os.path.join(self.base_path, str(self.ts))
+        self.path = os.path.join(self.base_path, str(self.device_id) + "_" + str(self.zone_id) + "_" + str(self.ts))
         os.mkdir(self.path)
 
         # save bag files
