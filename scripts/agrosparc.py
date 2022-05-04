@@ -235,8 +235,9 @@ class DataCollector:
 
         for i in range(bbox[0], bbox[2]):
             for j in range(bbox[1], bbox[3]):
-                nir_total += self.ms_array[i, j, 3]
-                nir_counter += 1
+                if not isnan(self.ms_array[i,j,3]):
+                    nir_total += self.ms_array[i, j, 3]
+                    nir_counter += 1
 
         nir_thresh = nir_total/nir_counter
 
@@ -259,7 +260,7 @@ class DataCollector:
                     ind[5] += 1.5*(1.2*(nir-green)-2.5*(red-green)) / \
                         sqrt(pow((3*nir+1), 2)-(6*nir-5*sqrt(red))-0.5)
                     ind[6] += 1.16*(nir-red)/(nir+red+0.16)
-                    ind[7] += nir - re/nir + re
+                    ind[7] += (nir - re)/(nir + re)
                     ind[8] += 2.5*(nir-red) / (nir+6*red-7.5*blue+1)
                     ind[9] += 0.5*(120*(nir-green)-200*(red-green))
                     ind[10] += (nir-red) / sqrt(nir+red)
@@ -274,134 +275,26 @@ class DataCollector:
     def calculate_indices_test(self):
         #pc_pub = rospy.Publisher("/test_pc", PointCloud2, queue_size=10)
 
-        # self.images = []
-        # for i in range(1, 6):
-        #     path = '/home/jelena/bags/agrosparc_test/IMG_0003_' + str(i) + '.tif'
-        #     #self.images.append(cv2.imread(path, cv2.IMREAD_UNCHANGED))
-        #     self.images.append(Image(path).undistorted_reflectance())
+        self.images = []
+        for i in range(1, 6):
+            path = '/home/jelena/catkin_ws_old/src/micasense_camera/agrosparc_nir_test/tmp/SYNC0042SET/002/IMG_0405_' + str(i) + '.tif'
+            self.images.append(cv2.imread(path, cv2.IMREAD_UNCHANGED))
+            #self.images.append(Image(path).undistorted_reflectance())
 
-        # self.ms_bands = 5
+        self.ms_bands = 5
 
-        # test_bag = rosbag.Bag('/home/jelena/bags/agrosparc_test/test.bag')
-        # for topic, msg, t in test_bag.read_messages(topics=['camera/depth_registered/points']):
-        #     self.pc_array = ros_numpy.point_cloud2.pointcloud2_to_array(msg)
+        test_bag = rosbag.Bag('/home/jelena/catkin_ws_old/src/micasense_camera/agrosparc_nir_test/tmp/tmp.bag')
+        for topic, msg, t in test_bag.read_messages(topics=['camera/depth_registered/points']):
+            self.pc_msg = msg
+            # self.pc_array = ros_numpy.point_cloud2.pointcloud2_to_array(msg)
 
-        # self.array = np.copy(self.pc_array)
-        # self.pc_height = self.pc_array.shape[0]
-        # self.pc_width = self.pc_array.shape[1]
-        # self.ms_array = np.full(
-        #     [self.pc_height, self.pc_width, self.ms_bands], NaN)
+        self.generate_mspc()
+        self.calculate_indices(self.upper_bbox, 31)
 
-        # for i in range(self.pc_height):
-        #     for j in range(self.pc_width):
-        #         pt = self.array[i][j]
-
-        #         if not isnan(pt[0]):
-        #             point = np.matrix([[pt[0]], [pt[1]], [pt[2]], [1]])
-
-        #             for n in range(self.ms_bands):
-        #                 point_transformed = np.dot(self.T[n], point)
-
-        #                 u, v = self.ms_camera[n].get_pixel_coordinates(
-        #                     point_transformed)
-        #                 if u is not None and v is not None:
-        #                     self.ms_array[i, j, n] = self.images[n][v, u]
-
-        # self.ndvi_array = np.copy(self.pc_array)
-        # nir_thresh = 0.15
-        ind = np.zeros(12)
-        counter = 0
-
-        nir_total = 0
-        nir_counter = 0
-
-        for i in range(self.lower_bbox[0], self.lower_bbox[2]):
-            for j in range(self.lower_bbox[1], self.lower_bbox[3]):
-                nir_total += self.ms_array[i, j, 3]
-                nir_counter += 1
-
-        nir_thresh = nir_total/nir_counter
-
-        for i in range(self.lower_bbox[0], self.lower_bbox[2]):
-            for j in range(self.lower_bbox[1], self.lower_bbox[3]):
-                blue = self.ms_array[i, j, 0]
-                green = self.ms_array[i, j, 1]
-                red = self.ms_array[i, j, 2]
-                nir = self.ms_array[i, j, 3]
-                re = self.ms_array[i, j, 4]
-
-                if not isnan(nir) and not isnan(red) and not isnan(green) and not isnan(re) and not isnan(blue) and nir > nir_thresh:
-                    counter += 1
-                    ind[0] += (nir-red)/(nir+red)
-                    ind[1] += nir/red
-                    ind[2] += (nir-green)/(nir+green)
-                    ind[3] += 0.16*(nir-red)/(nir+red+0.16)
-                    ind[4] += (2*nir + 1 -
-                               sqrt(pow((2*nir+1), 2) - 8*(nir-red))) / 2
-                    ind[5] += 1.5*(1.2*(nir-green)-2.5*(red-green)) / \
-                        sqrt(pow((3*nir+1), 2)-(6*nir-5*sqrt(red))-0.5)
-                    ind[6] += 1.16*(nir-red)/(nir+red+0.16)
-                    ind[7] += nir - re/nir + re
-                    ind[8] += 2.5*(nir-red) / (nir+6*red-7.5*blue+1)
-                    ind[9] += 0.5*(120*(nir-green)-200*(red-green))
-                    ind[10] += (nir-red) / sqrt(nir+red)
-                    ind[11] += nir-red
-
-                    self.ndvi_array[i, j][3] = (nir-red)/(nir+red)
-                else:
-                    self.ndvi_array[i, j][3] = NaN
-
-        avg_indices = ind / counter
-        print(avg_indices)
-
-        nir_total = 0
-        nir_counter = 0
-
-        for i in range(self.upper_bbox[0], self.upper_bbox[2]):
-            for j in range(self.upper_bbox[1], self.upper_bbox[3]):
-                nir_total += self.ms_array[i, j, 3]
-                nir_counter += 1
-
-        nir_thresh = nir_total/nir_counter
-        for i in range(self.upper_bbox[0], self.upper_bbox[2]):
-            for j in range(self.upper_bbox[1], self.upper_bbox[3]):
-                blue = self.ms_array[i, j, 0]
-                green = self.ms_array[i, j, 1]
-                red = self.ms_array[i, j, 2]
-                nir = self.ms_array[i, j, 3]
-                re = self.ms_array[i, j, 4]
-
-                if not isnan(nir) and not isnan(red) and not isnan(green) and not isnan(re) and not isnan(blue) and nir > nir_thresh:
-                    counter += 1
-                    ind[0] += (nir-red)/(nir+red)
-                    ind[1] += nir/red
-                    ind[2] += (nir-green)/(nir+green)
-                    ind[3] += 0.16*(nir-red)/(nir+red+0.16)
-                    ind[4] += (2*nir + 1 -
-                               sqrt(pow((2*nir+1), 2) - 8*(nir-red))) / 2
-                    ind[5] += 1.5*(1.2*(nir-green)-2.5*(red-green)) / \
-                        sqrt(pow((3*nir+1), 2)-(6*nir-5*sqrt(red))-0.5)
-                    ind[6] += 1.16*(nir-red)/(nir+red+0.16)
-                    ind[7] += nir - re/nir + re
-                    ind[8] += 2.5*(nir-red) / (nir+6*red-7.5*blue+1)
-                    ind[9] += 0.5*(120*(nir-green)-200*(red-green))
-                    ind[10] += (nir-red) / sqrt(nir+red)
-                    ind[11] += nir-red
-
-                    self.ndvi_array[i, j][3] = (nir-red)/(nir+red)
-                else:
-                    self.ndvi_array[i, j][3] = NaN
-
-        avg_indices = ind / counter
-        print(avg_indices)
-
-        msg = ros_numpy.point_cloud2.array_to_pointcloud2(
-            self.ndvi_array, frame_id='base')
-
-        while not rospy.is_shutdown():
-            pc_pub.publish(msg)
-            rospy.sleep(5)
-            print('PC published!')
+        # while not rospy.is_shutdown():
+        #     pc_pub.publish(msg)
+        #     rospy.sleep(5)
+        #     print('PC published!')
 
     def generate_mspc(self):
         self.pc_array = ros_numpy.point_cloud2.pointcloud2_to_array(
