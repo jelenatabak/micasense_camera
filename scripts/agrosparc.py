@@ -75,7 +75,7 @@ class DataCollector:
         self.tf_buffer = tf2_ros.Buffer()
         self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
         self.camera_frame = 'panda_camera'
-        self.ms_bands = 10
+        self.ms_bands = 5
 
         self.pc_topic = 'camera/depth_registered/points'
         self.rs_topic = 'camera/color/image_raw'
@@ -215,7 +215,6 @@ class DataCollector:
             path_split = path.split('/')
             write_path = os.path.join(
                 self.local_path, path_split[2], path_split[3])
-            print(write_path)
             os.umask(000)
             os.makedirs(write_path, mode=0o777, exist_ok=True)
             req = 'http://192.168.10.254' + path
@@ -223,7 +222,9 @@ class DataCollector:
             f.write(urllib.request.urlopen(req).read())
             f.close()
             print('Image saved: ' + write_path)
-            self.images.append(Image(write_path).undistorted_reflectance())
+            # self.images.append(Image(os.path.join(write_path, path_split[4])).undistorted_reflectance())
+            self.images.append(cv2.imread(os.path.join(write_path, path_split[4]), cv2.IMREAD_UNCHANGED))
+
 
     def calculate_indices(self, bbox, plant_id):
         ind = np.zeros(12)
@@ -263,10 +264,7 @@ class DataCollector:
                     ind[9] += 0.5*(120*(nir-green)-200*(red-green))
                     ind[10] += (nir-red) / sqrt(nir+red)
                     ind[11] += nir-red
-
-                    self.ndvi_array[i, j][3] = (nir-red)/(nir+red)
-                else:
-                    self.ndvi_array[i, j][3] = NaN
+                
 
         avg_indices = ind / counter
         insert_values = (self.ts, self.ts, *avg_indices, plant_id, self.zone_id, self.device_id, self.path)

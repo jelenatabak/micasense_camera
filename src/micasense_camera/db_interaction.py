@@ -43,7 +43,9 @@ def insert_camera_trigger(insert_values, conn):
             'device_id, ' \
             'zone_id, ' \
             'plant_id_upper, ' \
-            'plant_id_lower) VALUES ({})'.format(values_template)
+            'plant_id_lower, ' \
+            'status' \
+            'description) VALUES ({})'.format(values_template)
 
     cur.execute(timeout+query, insert_values)
     conn.commit()
@@ -184,7 +186,6 @@ def insert_camera_measurements(insert_values, conn):
             'tvi, ' \
             'rdvi, ' \
             'dvi, ' \
-            'cir, ' \
             'plant_id, ' \
             'zone_id, ' \
             'device_id, ' \
