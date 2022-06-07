@@ -239,7 +239,10 @@ class DataCollector:
                     nir_total += self.ms_array[i, j, 3]
                     nir_counter += 1
 
-        nir_thresh = nir_total/nir_counter
+        if nir_counter == 0:
+            nir_thresh = 0
+        else:
+            nir_thresh = nir_total/nir_counter
 
         for i in range(bbox[0], bbox[2]):
             for j in range(bbox[1], bbox[3]):
