@@ -202,3 +202,25 @@ def insert_camera_measurements(insert_values, conn):
     #     print('Rollback needed due to previous error.')
     #     cur.statusmessage
     #     conn.rollback()
+
+
+def insert_camera_irradiance_measurements(insert_values, conn):
+    cur = conn.cursor()
+    timeout = 'SET statement_timeout = 25000; '
+
+    # Create and execute query and check the status
+    values_template = ','.join(['%s'] * len(insert_values))
+    query = 'INSERT INTO camera_irradiance_measurements (' \
+            'batch_timestamp, ' \
+            'timestamp, ' \
+            'spectral_irradiance, ' \
+            'horizontal_irradiance, ' \
+            'scattered_irradiance, ' \
+            'direct_irradiance, ' \
+            'solar_azimuth, ' \
+            'solar_elevation, ' \
+            'device_id) VALUES ({})'.format(values_template)
+    cur.execute(timeout+query, insert_values)
+    conn.commit()
+    # Disconnect from the 3Smart database
+    cur.close()

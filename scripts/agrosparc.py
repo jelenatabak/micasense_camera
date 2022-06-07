@@ -18,6 +18,7 @@ from math import isnan, sqrt, pow
 import cv2
 from cv_bridge import CvBridge
 from micasense.image import Image
+import micasense.metadata as metadata
 import os
 import queue
 import dynamic_reconfigure.client
@@ -156,6 +157,8 @@ class DataCollector:
         self.lower_bbox = [280, 320, 470, 380]
         self.upper_bbox = [80, 320, 270, 380]
 
+        self.last_device_id = -1
+
     def collect_data(self):
         while not rospy.is_shutdown():
             self.cam = fetch_camera_trigger(self.conn)
@@ -225,6 +228,11 @@ class DataCollector:
             # self.images.append(Image(os.path.join(write_path, path_split[4])).undistorted_reflectance())
             self.images.append(cv2.imread(os.path.join(write_path, path_split[4]), cv2.IMREAD_UNCHANGED))
 
+        # save dls data if not already saved for current device
+        if self.last_device_id != self.device_id:
+            meta = metadata.Metadata(os.path.join(write_path, path_split[4]))
+            insert_values = (self.ts, meta.spectral_irradiance, meta.horizontal_irradiance, meta.scattered_irradiance, meta.direct_irradiance, meta.solar_azimuth, meta.solar_elevation, self.device_id)
+            self.last_device_id = self.device_id
 
     def calculate_indices(self, bbox, plant_id):
         ind = np.zeros(12)
